@@ -3,7 +3,7 @@ Powershell script to extract GMC data using a list of GMC numbers
 
 issues:
 reuse of existing IE object fails, so need to quit and restart IE
-even then it breaks regularly, so need to put it in an additiopnal loop to carch these breaks
+even then it breaks regularly, so need to put it in an additional loop to catch these breaks
 Most likely you'll need to check if all numbers were processed
 
 #>
