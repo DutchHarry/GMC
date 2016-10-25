@@ -12,7 +12,7 @@ probably should do that in JSON someday
 #change window title
 $host.ui.RawUI.WindowTitle = "GMC data all version"
 # sure all loop fires
-$gmctocheck1 = "2407142" # for restart; number to cycle forward to
+$gmctocheck1 = "2438924" # for restart; number to cycle forward to
 $gmctocheck = $gmctocheck1.PadLeft(7,'0')
 $line = "somethingtostartwith" # needs initialisation as it tests for $line -eq $null later
 
@@ -73,71 +73,64 @@ for(;;) { # all loop
         while ($ie.busy) {
           start-sleep -milliseconds 100
         }
-#         1         2         3         4         5
-#12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-#Results of search on: 25 Oct 2016 at 02:06:02. The details shown are valid at the date and time of the search only.
-        $extractdate = $null
-        $extractdate = ($ie.document.frames.item(0).document.frames.item(1).document.getElementsByClassName("tablebodypaddingtop")[0].innerHTML).Substring(23,22)
-        $gmcnumber = $null
-        $gmcnumber = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_23_0").innerHTML
-        $givennames = $null
-        $givennames = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_36_0").innerHTML
-        $surname = $null
-        $surname = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_37_0").innerHTML
-        $gender = $null
-        $gender = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_35_0").innerHTML
-        $status = $null
-        $status = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_11_0").innerHTML
-        #Write-Host "The GMC Number for GMC number $gmctocheck is $gmcnumber"
-        #Write-Host "The surname for GMC number $gmctocheck is $surname"
-        #Write-Host "The given name for GMC number $gmctocheck is $givennames"
-        #Write-Host "The gender for GMC number $gmctocheck is $gender"
-        #Write-Host "The status for GMC number $gmctocheck is $status"
+	      if ( $ie.document.frames.item(0).document.frames.item(1).document.getElementsByClassName("tablebody")[0].innerText -eq $null ) {	
+	        $extractdate = $null
+	        $extractdate = ($ie.document.frames.item(0).document.frames.item(1).document.getElementsByClassName("tablebodypaddingtop")[0].innerHTML).Substring(23,22)
+	        $gmcnumber = $null
+	        $gmcnumber = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_23_0").innerHTML
+	        $givennames = $null
+	        $givennames = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_36_0").innerHTML
+	        $surname = $null
+	        $surname = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_37_0").innerHTML
+	        $gender = $null
+	        $gender = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_35_0").innerHTML
+	        $status = $null
+	        $status = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_11_0").innerHTML
 
-        $primmedqual = $null
-        $primmedqual = $ie.document.frames.item(0).document.frames.item(1).document.getElementsByClassName("tablebodyfields")[13].innerHTML
-        $provregdate = $null
-        $provregdate = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_24_0").innerHTML
-        $fullregdate = $null
-        $fullregdate = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_4_0").innerHTML
-        $specregentrydate = $null
-        $specregentrydate = $ie.document.frames.item(0).document.frames.item(1).document.getElementsByClassName("tablebodyfields")[18].innerHTML
-        $gpregdate = $null
-        $gpregdate = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_6_0").innerHTML
-        $revalinfo = $null
-        $revalinfo = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_1_0").innerHTML
+	        $primmedqual = $null
+	        $primmedqual = $ie.document.frames.item(0).document.frames.item(1).document.getElementsByClassName("tablebodyfields")[13].innerHTML
+	        $provregdate = $null
+	        $provregdate = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_24_0").innerHTML
+	        $fullregdate = $null
+	        $fullregdate = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_4_0").innerHTML
+	        $specregentrydate = $null
+	        $specregentrydate = $ie.document.frames.item(0).document.frames.item(1).document.getElementsByClassName("tablebodyfields")[18].innerHTML
+	        $gpregdate = $null
+	        $gpregdate = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_6_0").innerHTML
+	        $revalinfo = $null
+	        $revalinfo = $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_2_1_1_0").innerHTML
 
+	        # to doctor history
+	        $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_1_1_4_0").Click()
+	        while($ie.ReadyState -ne 4) {start-sleep -m 100} 
+	        while ($ie.busy) {
+	          start-sleep -milliseconds 100
+	        }
 
-        #Write-Host "The primary medical qualification for GMC number $gmctocheck is $primmedqual"
-        #Write-Host "The provisional registration date for GMC number $gmctocheck is $provregdate"
-        #Write-Host "The full registration date for GMC number $gmctocheck is $fullregdate"
-        #Write-Host "The specialist register entry date for GMC number $gmctocheck is $specregentrydate"
-        #Write-Host "The GP registration date for GMC number $gmctocheck is $gpregdate"
-        #Write-Host "The Revalidation Information for GMC number $gmctocheck is $revalinfo"
+	        # grab table with history
+	        $listapplettablerows = $null
+	        $listapplettablerows = $ie.document.frames.item(0).document.frames.item(1).document.getElementsByClassName("listapplettablerows")
+	        $numcells = ($listapplettablerows | Measure).Count
+	        $history = $null
+	        For ($i=0; $i -lt $numcells; $i++){
+	          $datah = $null
+	          $datah = $listapplettablerows[$i].innerText
+	          $history = "$history|$datah"
+	        }
 
-        # to doctor history
-        $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_1_1_4_0").Click()
-        while($ie.ReadyState -ne 4) {start-sleep -m 100} 
-        while ($ie.busy) {
-          start-sleep -milliseconds 100
-        }
-
-        # grab table with history
-        $listapplettablerows = $null
-        $listapplettablerows = $ie.document.frames.item(0).document.frames.item(1).document.getElementsByClassName("listapplettablerows")
-        $numcells = ($listapplettablerows | Measure).Count
-        $history = $null
-        For ($i=0; $i -lt $numcells; $i++){
-          $datah = $null
-          $datah = $listapplettablerows[$i].innerText
-          $history = "$history|$datah"
-        }
-
-        # add record to data
-        $data = "$data$gmcnumber¬$surname¬$givennames¬$gender¬$status¬$primmedqual¬$provregdate¬$fullregdate¬$specregentrydate¬$gpregdate¬$revalinfo¬$extractdate¬$history$nl"     
-  
+	        # add record to data
+	        $data = "$data$gmcnumber¬$surname¬$givennames¬$gender¬$status¬$primmedqual¬$provregdate¬$fullregdate¬$specregentrydate¬$gpregdate¬$revalinfo¬$extractdate¬$history$nl"     
         # goto search again
         $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_1_1_3_0").Click()
+        }else{ 
+        	# if 2
+  	      if ( $ie.document.frames.item(0).document.frames.item(1).document.getElementsByClassName("tablebody")[0].innerText.Substring(0,5) -eq "Sorry") {
+            # goto search again
+            $ie.document.frames.item(0).document.frames.item(1).document.getElementById("s_4_1_3_0").Click()
+          } # if 2
+	      } # if 1
+
+
         start-sleep -milliseconds 1000
         while($ie.ReadyState -ne 4) {start-sleep -m 1000} 
         while ($ie.busy) {
@@ -147,7 +140,7 @@ for(;;) { # all loop
       }catch{ # 2nd catch
         $errordata = "$errordata$gmctocheck$nl"
         Write-Host "Error on $gmctocheck"
-        #Return #for testing to break out of look when errors
+        Return #for testing to break out of look when errors
       } # 2nd try
     } # for loop
   }catch{ # 1st catch
