@@ -140,7 +140,7 @@ for(;;) { # all loop
       }catch{ # 2nd catch
         $errordata = "$errordata$gmctocheck$nl"
         Write-Host "Error on $gmctocheck"
-        Return #for testing to break out of look when errors
+#        Return #for testing to break out of look when errors
       } # 2nd try
     } # for loop
   }catch{ # 1st catch
