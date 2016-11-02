@@ -1,0 +1,48 @@
+Function Toggle-List-Sep
+{
+param(
+		[string]$ListSeperator = "¬"
+		# comma is standard (UK settings)
+)
+<#
+# Source: https://gist.github.com/abombss/1129655
+
+Purpose:
+Temporarily change List Separator used by (among others) Excel as the delimiter to Save as CSV and also to Open CSVs
+
+Writes to Registry!!!!
+Toggles back to ',' if list separator is different from comma ','
+
+Usage: 
+# with default "¬"
+Toggle-List-Sep;
+#with option
+Toggle-List-Sep -ListSeperator '|';
+
+Note:
+	BE AWARE that this ALSO CHANGES the delimiter within Excel functions. e.g. =MID(A1¬1¬4) instead of =MID(A1,1,4)
+	So make sure that you reset it!
+	You can check in regsitry under:
+	"HKCU:\Control Panel\International"
+	"sList"
+
+#>
+  $ListSepPath = "HKCU:\Control Panel\International"
+  $ListSepKey = "sList"
+  
+  $ListSepCurrentSep = (Get-ItemProperty -Path $ListSepPath -Name $ListSepKey).$ListSepKey
+  
+  If ($args.Length -gt 0) { 
+  	$value = $args[0] 
+  } ElseIf ($ListSepCurrentSep -eq ",") { 
+  	$value = $ListSeperator 
+  } Else { 
+  	$value = "," 
+  }
+  
+  Set-ItemProperty -Path $ListSepPath -Name $ListSepKey -Value $value -type string
+  $ListSepNewSep = (Get-ItemProperty -Path $ListSepPath -Name $ListSepKey).$ListSepKey
+  
+  Write-Output "Changed $ListSepPath.$ListSepKey from '$ListSepCurrentSep' to '$ListSepNewSep'"
+}; # Function Toggle-List-Sep
+
