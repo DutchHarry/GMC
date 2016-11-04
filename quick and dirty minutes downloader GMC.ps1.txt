@@ -1,0 +1,43 @@
+<#
+Quick and dirty minutes downloader GMC
+#>
+
+$downloaddirectory = "s:\d\"
+
+$wc = New-Object net.webclient
+
+
+For ($i=0;$i -le 4000; $i++){
+	$source = "http://webcache.gmc-uk.org/minutesfiles/$i.html"
+	$destination = "$downloaddirectory/minutesfiles/$i.html"
+	# check if already exists
+	if ( (Test-Path $destination) -eq $true) {
+		# do nothing
+	}else{
+		# create empty file; -Force also creates any higher dirs needed
+		New-Item -ItemType File -Force -Path $destination  | Out-Null <# Out-Null to suppress output #>
+		# download
+		try {
+			$wc.Downloadfile($source, $destination)
+		}catch{
+			Write-Output $_.Exception.Message 
+			Write-Output ("ErrorCode      : $errorcode") 
+			Write-Output ("On address     : $source") 
+		  # who cares
+		  # just continue
+		}
+	}
+}
+
+# clean empty files
+Get-ChildItem $DestinationDirectory -Force -Recurse | Where {$_.Length -eq 0} | Remove-Item -Force -Recurse | Out-Null
+
+# clean out any empty folders resulting from errors above
+Get-ChildItem $DestinationDirectory -Force -Recurse | `
+Where {$_.PSIsContainer -and @(Get-ChildItem -LiteralPath $_.Fullname -Force -Recurse | Where {!$_.PSIsContainer}).Length -eq 0} | `
+Remove-Item -Force -Recurse | `
+Out-Null  <# -whatif #>
+
+# destroy client
+$wc = $Null
+
